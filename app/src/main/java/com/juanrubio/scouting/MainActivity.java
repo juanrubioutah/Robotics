@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,12 +22,17 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,17 +84,6 @@ public class MainActivity extends AppCompatActivity {
         final String passed = passedLineEditText.getText().toString();
         final String endgame = endgameEditText.getText().toString();
         final String notes = notesEditText.getText().toString();
-        HashMap<String, String> data = new HashMap<String, String>();
-
-            data.put("teamnum", teamNum);
-            data.put("matchnum", matchNum);
-            data.put("highboxes", highBox);
-            data.put("lowboxesSelf", lowBoxesOwn);
-            data.put("auto", auto);
-            data.put("endgame", endgame);
-            data.put("lowboxesEnemy", lowBoxesOpposing);
-            data.put("pass-line", passed);
-            data.put("additional-notes", notes);
 
 
         if(teamNum.equals("159896")){
@@ -94,27 +91,42 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         else if(!teamNum.equals("")&&!matchNum.equals("")&&!highBox.equals("")&&!lowBoxesOwn.equals("")&&!lowBoxesOpposing.equals("")&&!auto.equals("")&&!passed.equals("")&&!endgame.equals("")){
-            try {
-                RequestQueue queue = Volley.newRequestQueue(this);
-                JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, "http://team3006.com/scoutingsend/", data.toString(), new Response.Listener<JSONObject>(){
+            AsyncHttpClient client = new AsyncHttpClient();
+            RequestParams data = new RequestParams();
+            data.add("teamnum", teamNum);
+            data.add("matchnum", matchNum);
+            data.add("highboxes", highBox);
+            data.add("lowSelf", lowBoxesOwn);
+            data.add("auto", auto);
+            data.add("endgame", endgame);
+            data.add("lowEnemy", lowBoxesOpposing);
+            data.add("line", passed);
+            data.add("notes", notes);
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.i("RESPONSE: ", response.toString());
-                    }
-                }, new Response.ErrorListener(){
+            Log.i("Data Information: ", data.toString());
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("SENDING ERROR: ", error.toString());
-                    }
-                });
-                queue.add(req);
-            }catch(Exception e){
-                Log.e("SENDING ERROR:", "Error sending POST request");
-                Toast toast = Toast.makeText(this, "Error sending data. Check your internet connection", Toast.LENGTH_LONG);
-                toast.show();
-            }
+            client.post("http://website-env.us-east-2.elasticbeanstalk.com/scoutingsend/", data, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Log.i("Success: ", new String(responseBody));
+                    Toast.makeText(getBaseContext(), "Data Sent Successfully!", Toast.LENGTH_LONG).show();
+                    teamNumberEditText.setText("");
+                    matchNumberEditText.setText("");
+                    highBoxesEditText.setText("");
+                    lowBoxesOwnSwitchEditText.setText("");
+                    lowBoxesOpposingEditText.setText("");
+                    autonomousEditText.setText("");
+                    passedLineEditText.setText("");
+                    endgameEditText.setText("");
+                    notesEditText.setText("");
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Log.e("Error: ", new String(responseBody));
+                    Toast.makeText(getBaseContext(), "Error Sending Data. Check your internet connection.", Toast.LENGTH_LONG).show();
+                }
+            });
         }
         else{
             Toast toast = Toast.makeText(this, "Please Complete All Fields", Toast.LENGTH_LONG);

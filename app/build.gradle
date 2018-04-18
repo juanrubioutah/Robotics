@@ -26,5 +26,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'org.mongodb:mongo-java-driver:3.3.0'
+    compile 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.mcxiaoke.volley:library:1.0.19'
 }
