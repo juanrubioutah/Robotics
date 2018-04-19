@@ -20,7 +20,9 @@
         </activity>
         <activity android:name=".SavedListActivity" />
         <activity android:name=".UploadActivity" />
-        <activity android:name=".HiddenCreditsActivity"></activity>
+        <activity android:name=".HiddenCreditsActivity" />
+        <activity android:name=".LookupActivity" />
+        <activity android:name=".SaveSendActivity"></activity>
     </application>
 
 </manifest>

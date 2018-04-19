@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         notesEditText.setText("");
     }
 
-    public void save(View view){
+    public void upload(View view){
         final String teamNum = teamNumberEditText.getText().toString();
         final String matchNum = matchNumberEditText.getText().toString();
         final String highBox = highBoxesEditText.getText().toString();
@@ -132,5 +132,8 @@ public class MainActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this, "Please Complete All Fields", Toast.LENGTH_LONG);
             toast.show();
         }
+    }
+    public void save(View view){
+
     }
 }

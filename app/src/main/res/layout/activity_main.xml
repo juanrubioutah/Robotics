@@ -207,9 +207,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="Upload"
-                android:onClick="save"
+                android:onClick="upload"
                 android:id="@+id/saveButton"/>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Save"
+                android:onClick="save"
+                android:id=/>
         </LinearLayout>
     </LinearLayout>
 
